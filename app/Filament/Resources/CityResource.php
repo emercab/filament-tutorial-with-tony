@@ -7,6 +7,8 @@ use App\Filament\Resources\CityResource\RelationManagers;
 use App\Models\City;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -46,14 +48,18 @@ class CityResource extends Resource
     return $table
       ->columns([
         Tables\Columns\TextColumn::make('name')
-          ->searchable(),
-        Tables\Columns\TextColumn::make('state_id')
-          ->numeric()
+          ->searchable()
           ->sortable(),
+
+        Tables\Columns\TextColumn::make('state.name')
+          ->searchable()
+          ->sortable(),
+
         Tables\Columns\TextColumn::make('created_at')
           ->dateTime()
           ->sortable()
           ->toggleable(isToggledHiddenByDefault: true),
+
         Tables\Columns\TextColumn::make('updated_at')
           ->dateTime()
           ->sortable()
@@ -63,12 +69,29 @@ class CityResource extends Resource
         //
       ])
       ->actions([
+        Tables\Actions\ViewAction::make(),
         Tables\Actions\EditAction::make(),
       ])
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make(),
         ]),
+      ]);
+  }
+
+  public static function infolist(Infolist $infolist): Infolist
+  {
+    return $infolist
+      ->schema([
+        Infolists\Components\Section::make('City Info')
+          ->schema([
+            Infolists\Components\TextEntry::make('name')
+              ->label('City'),
+
+            Infolists\Components\TextEntry::make('state.name')
+              ->label('State'),
+          ])
+          ->columns(2),
       ]);
   }
 

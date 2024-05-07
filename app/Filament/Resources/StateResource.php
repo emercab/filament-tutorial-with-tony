@@ -7,6 +7,8 @@ use App\Filament\Resources\StateResource\RelationManagers;
 use App\Models\State;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -68,12 +70,29 @@ class StateResource extends Resource
         //
       ])
       ->actions([
+        Tables\Actions\ViewAction::make(),
         Tables\Actions\EditAction::make(),
       ])
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make(),
         ]),
+      ]);
+  }
+
+  public static function infolist(Infolist $infolist): Infolist
+  {
+    return $infolist
+      ->schema([
+        Infolists\Components\Section::make('State Info')
+          ->schema([
+            Infolists\Components\TextEntry::make('name')
+              ->label('State'),
+
+            Infolists\Components\TextEntry::make('country.name')
+              ->label('Country'),
+          ])
+          ->columns(2),
       ]);
   }
 

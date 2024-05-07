@@ -11,6 +11,8 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -121,38 +123,58 @@ class EmployeeResource extends Resource
   {
     return $table
       ->columns([
-        Tables\Columns\TextColumn::make('country_id')
-          ->numeric()
-          ->sortable(),
-        Tables\Columns\TextColumn::make('state_id')
-          ->numeric()
-          ->sortable(),
-        Tables\Columns\TextColumn::make('city_id')
-          ->numeric()
-          ->sortable(),
-        Tables\Columns\TextColumn::make('department_id')
-          ->numeric()
-          ->sortable(),
         Tables\Columns\TextColumn::make('first_name')
-          ->searchable(),
+          ->searchable()
+          ->sortable(),
+
         Tables\Columns\TextColumn::make('last_name')
-          ->searchable(),
+          ->searchable()
+          ->sortable(),
+
         Tables\Columns\TextColumn::make('middle_name')
-          ->searchable(),
+          ->searchable()
+          ->toggleable(isToggledHiddenByDefault: true),
+
+        Tables\Columns\TextColumn::make('country.name')
+          ->numeric()
+          ->sortable(),
+
+        Tables\Columns\TextColumn::make('state.name')
+          ->numeric()
+          ->sortable()
+          ->toggleable(isToggledHiddenByDefault: true),
+
+        Tables\Columns\TextColumn::make('city.name')
+          ->numeric()
+          ->sortable(),
+
         Tables\Columns\TextColumn::make('address')
-          ->searchable(),
+          ->searchable()
+          ->toggleable(isToggledHiddenByDefault: true),
+
         Tables\Columns\TextColumn::make('zip_code')
-          ->searchable(),
+          ->searchable()
+          ->sortable(),
+
+        Tables\Columns\TextColumn::make('department.name')
+          ->numeric()
+          ->sortable(),
+
         Tables\Columns\TextColumn::make('birth_date')
           ->date()
-          ->sortable(),
+          ->sortable()
+          ->toggleable(isToggledHiddenByDefault: true),
+
         Tables\Columns\TextColumn::make('hire_date')
           ->date()
-          ->sortable(),
+          ->sortable()
+          ->toggleable(isToggledHiddenByDefault: true),
+
         Tables\Columns\TextColumn::make('created_at')
           ->dateTime()
           ->sortable()
           ->toggleable(isToggledHiddenByDefault: true),
+
         Tables\Columns\TextColumn::make('updated_at')
           ->dateTime()
           ->sortable()
@@ -172,6 +194,59 @@ class EmployeeResource extends Resource
       ]);
   }
 
+  public static function infolist(Infolist $infolist): Infolist
+  {
+    return $infolist
+      ->schema([
+        Infolists\Components\Section::make('Employee Info')
+          ->schema([
+            Infolists\Components\TextEntry::make('first_name')
+              ->label('First Name'),
+
+            Infolists\Components\TextEntry::make('middle_name')
+              ->label('Middle Name'),
+
+            Infolists\Components\TextEntry::make('last_name')
+              ->label('Last Name'),
+          ])
+          ->columns(['sm' => 2, 'md' => 3]),
+
+        Infolists\Components\Section::make('Employee Location')
+          ->schema([
+            Infolists\Components\TextEntry::make('country.name')
+              ->label('Country'),
+
+            Infolists\Components\TextEntry::make('state.name')
+              ->label('State'),
+
+            Infolists\Components\TextEntry::make('city.name')
+              ->label('City'),
+
+            Infolists\Components\TextEntry::make('department.name')
+              ->label('Department'),
+
+            Infolists\Components\TextEntry::make('address')
+              ->label('Address'),
+
+            Infolists\Components\TextEntry::make('zip_code')
+              ->label('Zip Code'),
+          ])
+          ->columns(['sm' => 2, 'md' => 3]),
+
+          Infolists\Components\Section::make('Dates')
+          ->schema([
+            Infolists\Components\TextEntry::make('birth_date')
+              ->label('Birth Date')
+              ->dateTime('d/m/Y'),
+
+            Infolists\Components\TextEntry::make('hire_date')
+              ->label('Hire Date')
+              ->dateTime('d/m/Y'),
+          ])
+          ->columns(['sm' => 2]),
+      ]);
+  }
+
   public static function getRelations(): array
   {
     return [
@@ -184,7 +259,7 @@ class EmployeeResource extends Resource
     return [
       'index' => Pages\ListEmployees::route('/'),
       'create' => Pages\CreateEmployee::route('/create'),
-      'view' => Pages\ViewEmployee::route('/{record}'),
+      //'view' => Pages\ViewEmployee::route('/{record}'),
       'edit' => Pages\EditEmployee::route('/{record}/edit'),
     ];
   }

@@ -7,6 +7,8 @@ use App\Filament\Resources\CountryResource\RelationManagers;
 use App\Models\Country;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -49,11 +51,23 @@ class CountryResource extends Resource
     return $table
       ->columns([
         Tables\Columns\TextColumn::make('name')
-          ->searchable(),
+          ->searchable()
+          ->sortable(),
+
+        Tables\Columns\TextColumn::make('code')
+          ->searchable()
+          ->sortable(),
+
+        Tables\Columns\TextColumn::make('phone_code')
+          ->numeric()
+          ->searchable()
+          ->sortable(),
+
         Tables\Columns\TextColumn::make('created_at')
           ->dateTime()
           ->sortable()
           ->toggleable(isToggledHiddenByDefault: true),
+
         Tables\Columns\TextColumn::make('updated_at')
           ->dateTime()
           ->sortable()
@@ -63,12 +77,32 @@ class CountryResource extends Resource
         //
       ])
       ->actions([
+        Tables\Actions\ViewAction::make(),
         Tables\Actions\EditAction::make(),
       ])
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make(),
         ]),
+      ]);
+  }
+
+  public static function infolist(Infolist $infolist): Infolist
+  {
+    return $infolist
+      ->schema([
+        Infolists\Components\Section::make('Country Info')
+          ->schema([
+            Infolists\Components\TextEntry::make('name')
+              ->label('Country'),
+
+            Infolists\Components\TextEntry::make('code')
+              ->label('Code'),
+
+            Infolists\Components\TextEntry::make('phone_code')
+              ->label('Phone Code'),
+          ])
+          ->columns(['md' => 3]),
       ]);
   }
 
